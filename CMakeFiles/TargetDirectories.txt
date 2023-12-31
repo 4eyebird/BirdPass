@@ -1,0 +1,3 @@
+D:/Desktop/BirdPass/CMakeFiles/BirdPass.dir
+D:/Desktop/BirdPass/CMakeFiles/edit_cache.dir
+D:/Desktop/BirdPass/CMakeFiles/rebuild_cache.dir
