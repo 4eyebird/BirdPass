@@ -1,4 +1,4 @@
-#include "AES.h"
+ï»¿#include "AES.h"
 #include <cstdlib>
 #include <cstring>
 #include <iomanip>
@@ -12,7 +12,7 @@ typedef std::vector<unsigned char> bytes;
 namespace AES
 {
 
-    // ECB Ä£Ê½¼ÓÃÜ
+    // ECB æ¨¡å¼åŠ å¯†
     void ecb_encrypt(const unsigned char* input, const unsigned char* key, const int bok, unsigned char* output, size_t length)
     {
         AES_KEY aesKey;
@@ -24,7 +24,7 @@ namespace AES
         }
     }
 
-    // ECB Ä£Ê½½âÃÜ
+    // ECB æ¨¡å¼è§£å¯†
     void ecb_decrypt(const unsigned char* input, const unsigned char* key, const int bok, unsigned char* output, size_t length)
     {
         AES_KEY aesKey;
@@ -36,7 +36,7 @@ namespace AES
         }
     }
 
-    // CBC Ä£Ê½¼ÓÃÜ
+    // CBC æ¨¡å¼åŠ å¯†
     void cbc_encrypt(const unsigned char* input, const unsigned char* key, unsigned char* iv, const int bok, unsigned char* output, size_t length)
     {
         AES_KEY aesKey;
@@ -45,7 +45,7 @@ namespace AES
         AES_cbc_encrypt(input, output, length, &aesKey, iv, AES_ENCRYPT);
     }
 
-    // CBC Ä£Ê½½âÃÜ
+    // CBC æ¨¡å¼è§£å¯†
     void cbc_decrypt(const unsigned char* input, const unsigned char* key, unsigned char* iv, const int bok, unsigned char* output, size_t length)
     {
         AES_KEY aesKey;
