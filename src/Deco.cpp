@@ -1,4 +1,4 @@
-#include "Deco.h"
+﻿#include "Deco.h"
 #include <cstdlib>
 #include <cstring>
 #include <iomanip>
