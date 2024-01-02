@@ -1,4 +1,4 @@
-#include "sm4.h"
+﻿#include "sm4.h"
 #include <cstring>
 
 typedef std::vector<unsigned char> bytes;
