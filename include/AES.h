@@ -1,19 +1,19 @@
-#pragma once
+ï»¿#pragma once
 #include <string>
 #include <vector>
 
 namespace AES
 {
-    // ECB Ä£Ê½¼ÓÃÜ
+    // ECB æ¨¡å¼åŠ å¯†
     void ecb_encrypt(const unsigned char* input, const unsigned char* key, const int bok, unsigned char* output, size_t length);
 
-    // ECB Ä£Ê½½âÃÜ
+    // ECB æ¨¡å¼è§£å¯†
     void ecb_decrypt(const unsigned char* input, const unsigned char* key, const int bok, unsigned char* output, size_t length);
 
-    // CBC Ä£Ê½¼ÓÃÜ
+    // CBC æ¨¡å¼åŠ å¯†
     void cbc_encrypt(const unsigned char* input, const unsigned char* key, unsigned char* iv, const int bok, unsigned char* output, size_t length);
 
-    // CBC Ä£Ê½½âÃÜ
+    // CBC æ¨¡å¼è§£å¯†
     void cbc_decrypt(const unsigned char* input, const unsigned char* key, unsigned char* iv, const int bok, unsigned char* output, size_t length);
 
 }

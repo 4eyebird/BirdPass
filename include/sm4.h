@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifndef LIB_SM4_H
 #define LIB_SM4_H
 
