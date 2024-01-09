@@ -6,6 +6,7 @@
 #include <conio.h>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -24,6 +25,7 @@ OS::OS()
 	Fname1 = "data/data1";
 	Fname2 = "data/data2";
 	Fname3 = "data/data3";
+	filecheck();
 	readSCpass();
 }
 
@@ -231,7 +233,7 @@ bool OS::Securitycheck1()
 	int wtimes = 0;
 	bool pass = 0, pass1 = 0;
 	string note = "password:";
-	string token, tkb, ki, salt = "wsy";
+	string token, tkb, ki, salt = "BPS";
 	token = getoken(note, datlenlim) + salt;
 	note = "wrong password!\nTry again:";
 	while(1)
@@ -412,7 +414,7 @@ void OS::Room(auto& dbase, OSfunpt open, OSfunpt save)
 				y = getoken(t1 + x + '\n' + t2, datlenlim);
 				if(x.length() <= datlenlim)
 				{
-					dbase.push_back({ x,y });
+					dbase.push_back({ x, y });
 					ctd++;
 				}
 				break;
@@ -542,6 +544,63 @@ void OS::run(OSfunpt ptr, auto& dbase)
 	(this->*ptr)(dbase);
 }
 
+void OS::_exit(int code)
+{
+	system("cls");
+
+	switch(code)
+	{
+	case 1:
+		cout << "Error 1: Data file not found\n";
+		break;
+	case 2:
+		cout << "Error 2: Data file is corrupted\n";
+		break;
+	default:
+		cout << "Unexpected error encountered\n";
+		break;
+	}
+
+	system("pause");
+	exit(code);
+}
+
+void OS::filecheck()
+{
+	string folderName = "data";
+
+	if(!filesystem::exists(folderName))
+		filesystem::create_directory(folderName);
+
+	fstream file;
+
+	file.open(Fname1);
+	if(!file.is_open())
+		file.open(Fname1, ios::out);
+	file.close();
+
+	file.open(Fname2);
+	if(!file.is_open())
+		file.open(Fname2, ios::out);
+	file.close();
+
+	file.open(Fname3);
+	if(!file.is_open())
+		file.open(Fname3, ios::out);
+	file.close();
+
+	file.open(Fname0);
+	if(!file.is_open())
+	{
+		file.open(Fname0, ios::out);
+		file << "8c50a7a2fbfac67d74188c23b80716a9154eb8566b250f8a55da8608fe36373807ff27a41bf7dc4f322d2d8d77871a4704a912060c7656681050f868d486cb31\n";
+		file << "1d488a627c2c8246bb70465e4a49790012db4196da5e2e4d9a803d3e35806ea6e3ebfb97237d667bb8bc2e8d396934c45e67144d8950b7dd9adca9ea7898794a\n";
+		file << "aa86e21f613575425a12b57b22f88184ae7b9bdeeb9546ad79b0cdc2f78bcac11c581fb9c816dee70a521fc98d6e9cd34910701c42f469ac8867b59a97fef57e83dea93a7b02e8b4def66dc0c1ff41839d1c244926a5fd3769d56029181c3ad4409601a8d79f02acf2b7212f76a373bafccc3cdd2c8680e221fdbe3e0506c7357045ce2a65c685dab8472bd4c42c5cca\n";
+		file << "MD5: ba11ddd605088dcfe9d4908b5e711484";
+	}
+	file.close();
+}
+
 void OS::readSCpass()
 {
 	fstream ps(Fname0);
@@ -559,17 +618,17 @@ void OS::readSCpass()
 		lkey1 = sha256("Stay hungry Stay foolish");
 		string Hash2 = byte_hex(md5(byte_hex(sha256(pass))));
 		if(Hash != Hash2)
-			exit(1);
+			_exit(2);
 	}
 	else
-		exit(1);
+		_exit(1);
 }
 
 void OS::PasswordChange()
 {
 	using namespace Deco;
 	if(lkey1.empty() || key1.empty() || lkey2.empty()
-	   || key2.empty() || key3.empty() || key4.empty())
+	        || key2.empty() || key3.empty() || key4.empty())
 		return;
 
 	string nkey1 = getoken("New password1:", datlenlim);
@@ -585,7 +644,7 @@ void OS::PasswordChange()
 
 	string Hash1, Hash2, Hash3, Hash4;
 
-	string salt = "wsy";
+	string salt = "BPS";
 	string token = nkey1 + salt;
 	Hash1 = byte_hex(sha512(token));
 	salt.resize(0);
@@ -631,7 +690,7 @@ void OS::PasswordChange()
 	savedb3(dbase3);
 
 	ofstream file(Fname0);
-	if(!file.is_open())exit(1);
+	if(!file.is_open())_exit(1);
 	file << Hash1;
 	file << '\n';
 	file << Hash2;
@@ -709,7 +768,7 @@ void OS::opendb1(auto& dbase)
 	dbase.clear();
 	using namespace Deco;
 	ifstream file(Fname1);
-	if(!file.is_open())exit(1);
+	if(!file.is_open())_exit(1);
 	unsigned char outext[32];
 	bytes rkey = key1;
 	while(!file.eof())
@@ -723,7 +782,7 @@ void OS::opendb1(auto& dbase)
 			if(y == gethash(dbase, 1))
 				break;
 			else
-				exit(1);
+				_exit(2);
 		}
 
 		bytes inbytes = hex_byte(x.c_str(), x.length());
@@ -750,7 +809,7 @@ void OS::opendb1(auto& dbase)
 
 		x.pop_back();
 		y.pop_back();
-		dbase.push_back({ x,y });
+		dbase.push_back({ x, y });
 	}
 	file.close();
 	key1 = rkey;
@@ -763,7 +822,7 @@ void OS::savedb1(auto& dbase)
 	string Hash = gethash(dbase, 1);
 	using namespace Deco;
 	ofstream file(Fname1);
-	if(!file.is_open())exit(1);
+	if(!file.is_open())_exit(1);
 	unsigned char outext[32];
 	int ctd = (int)dbase.size();
 	if(!ctd)
@@ -820,7 +879,7 @@ void OS::opendb2(auto& dbase)
 	dbase.clear();
 	using namespace Deco;
 	ifstream file(Fname2);
-	if(!file.is_open())exit(1);
+	if(!file.is_open())_exit(1);
 	unsigned char outext[32];
 	bytes iv = sha512(byte_hex(lkey2) + byte_hex(key2));
 	for(int i = 1; i <= 5; i++)
@@ -836,7 +895,7 @@ void OS::opendb2(auto& dbase)
 			if(y == gethash(dbase, 5))
 				break;
 			else
-				exit(1);
+				_exit(2);
 		}
 
 		bytes ivv = iv;
@@ -870,7 +929,7 @@ void OS::opendb2(auto& dbase)
 		y.pop_back();
 		y.pop_back();
 		y.pop_back();
-		dbase.push_back({ x,y });
+		dbase.push_back({ x, y });
 	}
 	file.close();
 	op2 = 1;
@@ -882,7 +941,7 @@ void OS::savedb2(auto& dbase)
 	string Hash = gethash(dbase, 5);
 	using namespace Deco;
 	ofstream file(Fname2);
-	if(!file.is_open())exit(1);
+	if(!file.is_open())_exit(1);
 	unsigned char outext[32];
 	int ctd = (int)dbase.size();
 	if(!ctd)
@@ -946,7 +1005,7 @@ void OS::opendb3(auto& dbase)
 	dbase.clear();
 	using namespace Deco;
 	ifstream file(Fname3);
-	if(!file.is_open())exit(1);
+	if(!file.is_open())_exit(1);
 	unsigned char outext[64];
 
 	sm4 Sm4;
@@ -983,7 +1042,7 @@ void OS::opendb3(auto& dbase)
 					}
 				}
 			}
-			exit(1);
+			_exit(2);
 		}
 
 		Hash2 += x;
@@ -1033,7 +1092,7 @@ void OS::opendb3(auto& dbase)
 			}
 		}
 
-		dbase.push_back({ x,y });
+		dbase.push_back({ x, y });
 
 		token1 += x;
 		token2 += y;
@@ -1053,7 +1112,7 @@ void OS::savedb3(auto& dbase)
 	string Hash1 = gethash(dbase, 2);
 	using namespace Deco;
 	ofstream file(Fname3);
-	if(!file.is_open())exit(1);
+	if(!file.is_open())_exit(1);
 	unsigned char outext[64];
 	int ctd = (int)dbase.size();
 	if(!ctd)

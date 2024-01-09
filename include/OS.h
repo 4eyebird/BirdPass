@@ -57,6 +57,10 @@ protected:
 
 	void run(OSfunpt ptr, auto& dbase);
 
+	void _exit(int code);
+
+	void filecheck();
+
 	void readSCpass();
 
 	void PasswordChange();
